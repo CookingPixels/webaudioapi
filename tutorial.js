@@ -1,6 +1,17 @@
 //Audio stuff---------------------------------------------
 var contextClass = (window.AudioContext ||
   window.webkitAudioContext || window.mozAudioContext);
+
+// Get mic in
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+navigator.getUserMedia(
+  {audio:true},
+  gotStream,
+  function(err) {
+    console.log("The following error occured: " + err);
+  }
+);
+
 //for sound to be passed into
 var audioBuffer;
 //for analyser node
@@ -32,6 +43,15 @@ function loadSound() {
 	     });
 		}
 	request.send();
+}
+
+// success callback when requesting audio input stream
+function gotStream(stream) {
+    createAnalyser()
+    // Create an AudioNode from the stream.
+    var mediaStreamSource = context.createMediaStreamSource(stream);
+    connectAnalyser(mediaStreamSource)
+    update();
 }
 
 function createAnalyser(source) {
